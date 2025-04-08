@@ -1,78 +1,144 @@
-# 📋 Tasks – Clean Architecture Task Manager
+# Taskoryx 🧠✅
 
-A full-stack, self-hostable task management system built with Go (Fiber, SQLX, Redis) and React (TailwindCSS), following **Hexagonal Architecture**. Designed for high performance, code maintainability, and production readiness.
+A modern, self-hostable task management application built with Go (Fiber), PostgreSQL, Redis, and a sleek React frontend. Designed with clean architecture and best practices in mind, Taskoryx also supports Telegram integration and JWT-based authentication.
+
 ---
 
-## 🚀 Features
+## ✨ Features
 
-- ✅ Hexagonal (Ports & Adapters) Architecture
-- 🔐 JWT Authentication & Role-based access
-- 🗂 Manage Tasks with Status & Due Dates
-- ⚡ Fast Redis-based Caching
-- 🐘 PostgreSQL for persistent storage
-- 🧾 Structured logging using Zap
-- 📦 Config management using Viper
-- 🤖 Telegram bot integration for alerts
-- 🎨 React + TailwindCSS frontend
-- 🐳 Docker + Docker Compose support
----
+- User authentication with JWT
+- Secure password hashing
+- Task CRUD operations
+- PostgreSQL via `sqlx`
+- Redis caching
+- Logging with Uber Zap
+- Configuration management via Viper
+- Telegram integration for notifications
+- Modern React frontend (Vite + Tailwind)
+- Clean architecture structure
+- Fully dockerized setup for easy deployment
 
-## 🧱 Tech Stack
-| Layer | Tech Used |
-|------------|----------------------------------------|
-| Frontend | React, TailwindCSS |
-| Backend | Go, Fiber, SQLX, Redis, Zap, Viper |
-| Database | PostgreSQL |
-| Auth | JWT |
-| Bot | Telegram |
-| DevOps | Docker, Docker Compose |
 ---
 
 ## 📁 Project Structure
-See the [Directory Tree](#-directory-tree-backend--frontend---hexagonal) above for details.
+
+See the tree below for a breakdown of the structure.
+
 ---
 
-## 🧰 Installation
-### 🚧 Prerequisites
-- Go ≥ 1.21
-- Node.js ≥ 18
-- Docker + Docker Compose
-- PostgreSQL + Redis (can be local or via Docker)
-### 🔧 Backend Setup
+## 🚀 Getting Started
+
+### Requirements
+
+- Go >= 1.21
+- PostgreSQL >= 14
+- Redis
+- Node.js >= 18 (for frontend)
+- Docker (optional for dev)
+
+---
+
+### 🧰 Backend Setup
+
 ```bash
-git clone https://github.com/your-username/tasks.git
-cd tasks/backend
-# Copy and configure environment
+git clone https://github.com/yourusername/taskoryx.git
+cd taskoryx
+
 cp .env.example .env
-# Run using Docker
-docker-compose up --build
+go mod tidy
+
+# Run the app
+go run main.go
 ```
-### 💻 Frontend Setup
+
+### 🖥️ Frontend Setup
+
 ```bash
-cd ../frontend
+cd frontend
 npm install
 npm run dev
 ```
-Access frontend at: `http://localhost:5173`
-Backend API runs at: `http://localhost:8080`
----
-## 🧪 Running Tests
+
+### 🐋 Docker Setup
+
 ```bash
-cd backend
-go test ./...
+docker-compose up --build
 ```
+
 ---
-## ✍️ Contribution Guide
-1. Fork the repository 🍴
-2. Create a new branch: `git checkout -b feature-name`
-3. Make your changes ✨
-4. Commit: `git commit -m "Add some feature"`
-5. Push: `git push origin feature-name`
-6. Open a Pull Request 📬
+
+## 📚 API Endpoints
+
+### Auth
+
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+
+### Tasks
+
+- `GET /api/v1/tasks`
+- `POST /api/v1/tasks`
+- `PUT /api/v1/tasks/:id`
+- `DELETE /api/v1/tasks/:id`
+
 ---
-## 📜 License
-This project is licensed under the **MIT License**. See [LICENSE](./LICENSE) for details.
+
+## 🧱 Project Directory Tree
+
+```bash
+taskoryx/
+├── cmd/
+│   └── server/           # App entrypoint (main.go)
+├── config/               # Configuration via Viper
+├── internal/
+│   ├── auth/             # Auth usecases, handlers
+│   ├── task/             # Task usecases, handlers
+│   ├── user/             # User logic
+│   ├── middleware/       # JWT, logging, etc.
+│   └── telegram/         # Telegram bot integration
+├── pkg/
+│   ├── db/               # PostgreSQL + Redis setup (sqlx)
+│   ├── logger/           # Zap logger setup
+│   └── utils/            # Utilities and helpers
+├── migrations/           # SQL migration files
+├── frontend/             # React + Tailwind frontend
+├── .env.example          # Example env file
+├── docker-compose.yml    # Docker configuration
+└── README.md
+```
+
 ---
-## 💬 Contact
-Maintained by [Shahryar Pirooz](https://github.com/Shahryar-Pirooz)
-Telegram Bot support coming soon 🤖 
+
+## 📂 Directory Purpose Table
+
+| Directory         | Purpose |
+|------------------|---------|
+| `cmd/server`      | Application entrypoint with `main.go` |
+| `config/`         | Loads configuration using Viper |
+| `internal/auth`   | Handles JWT auth, password logic |
+| `internal/task`   | Core business logic for tasks |
+| `internal/user`   | User registration, validation |
+| `internal/middleware` | Middleware for Fiber (JWT, Logging) |
+| `internal/telegram` | Telegram bot handler for notifications |
+| `pkg/db`          | DB connection logic for PostgreSQL & Redis |
+| `pkg/logger`      | Zap logger instance and configuration |
+| `pkg/utils`       | Utility functions (e.g., hashing) |
+| `migrations/`     | SQL migration files for DB schema |
+| `frontend/`       | React app with Tailwind |
+| `.env.example`    | Template for environment variables |
+
+---
+
+## 📬 Telegram Integration
+
+To receive task notifications via Telegram:
+
+1. Create a bot via [@BotFather](https://t.me/botfather)
+2. Add your bot token and chat ID to `.env`
+3. Enable notifications in your profile
+
+---
+
+## ✅ License
+
+MIT — FOSS and free to self-host.
