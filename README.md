@@ -1,7 +1,10 @@
 # 📋 Tasks – Clean Architecture Task Manager
+
 A full-stack, self-hostable task management system built with Go (Fiber, SQLX, Redis) and React (TailwindCSS), following **Hexagonal Architecture**. Designed for high performance, code maintainability, and production readiness.
 ---
+
 ## 🚀 Features
+
 - ✅ Hexagonal (Ports & Adapters) Architecture
 - 🔐 JWT Authentication & Role-based access
 - 🗂 Manage Tasks with Status & Due Dates
@@ -13,6 +16,7 @@ A full-stack, self-hostable task management system built with Go (Fiber, SQLX, R
 - 🎨 React + TailwindCSS frontend
 - 🐳 Docker + Docker Compose support
 ---
+
 ## 🧱 Tech Stack
 | Layer | Tech Used |
 |------------|----------------------------------------|
@@ -23,9 +27,11 @@ A full-stack, self-hostable task management system built with Go (Fiber, SQLX, R
 | Bot | Telegram |
 | DevOps | Docker, Docker Compose |
 ---
+
 ## 📁 Project Structure
 See the [Directory Tree](#-directory-tree-backend--frontend---hexagonal) above for details.
 ---
+
 ## 🧰 Installation
 ### 🚧 Prerequisites
 - Go ≥ 1.21
