@@ -1,0 +1,9 @@
+http:
+    host: localhost
+    port: 8080
+database:
+    host: localhost
+    name: tasks
+    password: password
+    port: 6543
+    user: ess
