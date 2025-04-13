@@ -3,7 +3,7 @@ http:
     port: 8080
 database:
     host: localhost
-    name: tasks
-    password: password
-    port: 6543
+    name: tskrx
+    password: 123
+    port: 5432
     user: ess

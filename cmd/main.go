@@ -6,10 +6,13 @@ import (
 	"os"
 
 	"tasoryx/config"
+	"tasoryx/pkg/db"
 )
 
 func main() {
-	fmt.Println(setConfig())
+	db.Connect(setConfig().Database)
+	defer db.DB.Close()
+	db.EnsureAllTables()
 }
 
 func setConfig() config.Config {
