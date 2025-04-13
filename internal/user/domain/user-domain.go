@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -11,24 +12,20 @@ import (
 
 type UserID = uuid.UUID
 
-type UserRule int8
+type UserRole int8
 
 const (
-	UserRuleUnknown UserRule = iota
-	UserRuleAdmin
-	UserRuleUser
+	UserRoleUnknown UserRole = iota
+	UserRoleAdmin
+	UserRoleUser
 )
-
-func (u UserRule) isValid() bool {
-	return u == UserRuleAdmin || u == UserRuleUser
-}
 
 type User struct {
 	ID        UserID
 	Name      string
 	Email     string
 	Password  string
-	Rule      UserRule
+	Role      UserRole
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -37,7 +34,11 @@ type FilterUser struct {
 	Name     string
 	Email    string
 	Password string
-	Rule     UserRule
+	Role     UserRole
+}
+
+func (u UserRole) isValid() bool {
+	return u == UserRoleAdmin || u == UserRoleUser
 }
 
 func passwordValidation(pass string) []string {
@@ -69,6 +70,10 @@ func (u User) Validate() error {
 		}
 	} else {
 		errs = append(errs, "email is required")
+	}
+
+	if !u.Role.isValid() {
+		errs = append(errs, fmt.Sprintf("status '%d' is invalid", u.Role))
 	}
 
 	pv := passwordValidation(u.Password)
