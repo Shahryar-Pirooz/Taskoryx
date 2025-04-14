@@ -11,7 +11,7 @@ import (
 
 var DB *sqlx.DB
 
-func Connect(cnf config.Database) {
+func Init(cnf config.Database) {
 	host := cnf.Host
 	port := cnf.Port
 	user := cnf.User
