@@ -7,3 +7,4 @@ database:
     password: 123
     port: 5432
     user: ess
+production: false

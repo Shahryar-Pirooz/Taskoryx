@@ -2,16 +2,21 @@ package db
 
 import (
 	"fmt"
-	"log"
 	"tasoryx/config"
+	"tasoryx/pkg/logger"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 )
 
-var DB *sqlx.DB
+var (
+	DB  *sqlx.DB
+	log *zap.Logger
+)
 
 func Init(cnf config.Database) {
+	log = logger.GetLogger()
 	host := cnf.Host
 	port := cnf.Port
 	user := cnf.User
@@ -24,9 +29,10 @@ func Init(cnf config.Database) {
 
 	DB, err = sqlx.Connect("postgres", dsn)
 	if err != nil {
-		panic(fmt.Sprintf("could not connect to postgresql: %v", err))
+		log.Panic(fmt.Sprintf("could not connect to postgresql: %v", err))
 	}
-	log.Println("Connected to PostgreSQL")
+	log.Info("Connected to PostgreSQL")
+	EnsureAllTables()
 }
 
 func EnsureAllTables() {
@@ -48,9 +54,9 @@ func EnsureTaskTables() {
 
 	_, err := DB.Exec(taskSchema)
 	if err != nil {
-		panic(fmt.Sprintf("failed to create task table: %v", err))
+		log.Panic(fmt.Sprintf("failed to create task table: %v", err))
 	}
-	log.Println("users table checked/created")
+	log.Info("users table checked/created")
 }
 
 func EnsureUserTables() {
@@ -66,7 +72,7 @@ func EnsureUserTables() {
 		);`
 	_, err := DB.Exec(userSchema)
 	if err != nil {
-		panic(fmt.Sprintf("failed to create user table: %v", err))
+		log.Panic(fmt.Sprintf("failed to create user table: %v", err))
 	}
-	log.Println("users table checked/created")
+	log.Info("users table checked/created")
 }

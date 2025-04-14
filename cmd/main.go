@@ -2,17 +2,18 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 
 	"tasoryx/config"
 	"tasoryx/pkg/db"
+	"tasoryx/pkg/logger"
 )
 
 func main() {
-	db.Connect(setConfig().Database)
+	cfg := setConfig()
+	logger.Init(cfg.Production)
+	db.Init(cfg.Database)
 	defer db.DB.Close()
-	db.EnsureAllTables()
 }
 
 func setConfig() config.Config {
@@ -28,8 +29,6 @@ func setConfig() config.Config {
 	if pathEnv := os.Getenv("TASKORYX_CONFIG_PATH"); len(pathEnv) > 1 {
 		path = pathEnv
 	}
-
-	fmt.Println(path)
 	cfg := config.MustRead(path)
 
 	return cfg

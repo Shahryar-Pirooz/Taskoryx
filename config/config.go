@@ -1,8 +1,9 @@
 package config
 
 type Config struct {
-	Server   ServerConfig `mapstructure:"http"`
-	Database Database     `mapstructure:"database"`
+	Server     ServerConfig `mapstructure:"http"`
+	Database   Database     `mapstructure:"database"`
+	Production bool         `mapstructure:"production"`
 }
 
 type ServerConfig struct {
