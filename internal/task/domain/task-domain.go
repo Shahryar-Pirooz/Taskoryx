@@ -28,7 +28,7 @@ type Task struct {
 	Title       string
 	Description string
 	Status      StatusTask
-	DateDue     time.Time
+	DueDate     time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -48,7 +48,7 @@ func (t Task) Validate() error {
 	if !t.Status.isValid() {
 		errs = append(errs, fmt.Sprintf("status '%d' is invalid", t.Status))
 	}
-	if t.DateDue.Before(time.Now()) {
+	if t.DueDate.Before(time.Now()) {
 		errs = append(errs, "due date must be in the future")
 	}
 

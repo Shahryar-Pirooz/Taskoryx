@@ -3,7 +3,7 @@ package types
 import "time"
 
 type User struct {
-	ID        uint8     `db:"id"`
+	ID        string    `db:"id"`
 	Name      string    `db:"name"`
 	Email     string    `db:"email"`
 	Password  string    `db:"password"`
