@@ -31,6 +31,6 @@ func Init(isProduction bool) {
 	})
 }
 
-func GetLogger() *zap.Logger {
+func Get() *zap.Logger {
 	return logger
 }
