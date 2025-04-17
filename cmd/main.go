@@ -12,8 +12,7 @@ import (
 func main() {
 	cfg := setConfig()
 	logger.Init(cfg.Production)
-	db.Init(cfg.Database)
-	defer db.DB.Close()
+	db.NewPSQLConnection(cfg.Database)
 }
 
 func setConfig() config.Config {
