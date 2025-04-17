@@ -2,8 +2,8 @@ package fp
 
 func Map[T, U any](s []T, mapFunction func(T) U) []U {
 	result := make([]U, len(s))
-	for _, item := range s {
-		result = append(result, mapFunction(item))
+	for index := range s {
+		result[index] = mapFunction(s[index])
 	}
 	return result
 }
