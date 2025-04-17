@@ -1,14 +1,16 @@
 package types
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
-	ID        string    `db:"id"`
-	Name      string    `db:"name"`
-	Email     string    `db:"email"`
-	Password  string    `db:"password"`
-	Role      uint8     `db:"role"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
-	DeletedAt time.Time `db:"deleted_at"`
+	ID        string
+	Name      string
+	Email     string
+	Password  string
+	Role      uint8
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
 }
