@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/google/uuid"
 )
 
-type TaskID = uuid.UUID
+type TaskID = string
 
 type StatusTask int8
 

@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"tasoryx/internal/user/domain"
 	"tasoryx/internal/user/port"
-
-	"github.com/google/uuid"
 )
 
 type service struct {
@@ -22,7 +20,7 @@ func NewService(repo port.Repo) port.Service {
 func (s *service) CreateUser(ctx context.Context, user domain.User) (domain.UserID, error) {
 	id, err := s.repo.Create(ctx, user)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("cannot create user : %w", err)
+		return "", fmt.Errorf("cannot create user : %w", err)
 	}
 	return id, nil
 }

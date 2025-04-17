@@ -6,11 +6,9 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/google/uuid"
 )
 
-type UserID = uuid.UUID
+type UserID = string
 
 type UserRole int8
 

@@ -3,14 +3,11 @@ package mapper
 import (
 	"tasoryx/internal/task/domain"
 	"tasoryx/pkg/adapters/storage/types"
-
-	"github.com/google/uuid"
 )
 
-func TaskDomain2Repo(d domain.Task) types.Task {
-	id := d.ID.String()
-	return types.Task{
-		ID:          id,
+func TaskDomain2Repo(d domain.Task) *types.Task {
+	return &types.Task{
+		ID:          d.ID,
 		Title:       d.Title,
 		Description: d.Description,
 		Status:      uint8(d.Status),
@@ -20,10 +17,9 @@ func TaskDomain2Repo(d domain.Task) types.Task {
 	}
 }
 
-func TaskRepo2Domain(r types.Task) domain.Task {
-	id, _ := uuid.Parse(r.ID)
-	return domain.Task{
-		ID:          id,
+func TaskRepo2Domain(r types.Task) *domain.Task {
+	return &domain.Task{
+		ID:          r.ID,
 		Title:       r.Title,
 		Description: r.Description,
 		Status:      domain.StatusTask(r.Status),

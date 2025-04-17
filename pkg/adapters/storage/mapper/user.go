@@ -3,14 +3,11 @@ package mapper
 import (
 	"tasoryx/internal/user/domain"
 	"tasoryx/pkg/adapters/storage/types"
-
-	"github.com/google/uuid"
 )
 
-func UserDomain2Repo(d domain.User) types.User {
-	id := d.ID.String()
-	return types.User{
-		ID:        id,
+func UserDomain2Repo(d domain.User) *types.User {
+	return &types.User{
+		ID:        d.ID,
 		Name:      d.Name,
 		Email:     d.Email,
 		Password:  d.Password,
@@ -20,10 +17,9 @@ func UserDomain2Repo(d domain.User) types.User {
 	}
 }
 
-func UserRepo2Domain(r types.User) domain.User {
-	id, _ := uuid.Parse(r.ID)
-	return domain.User{
-		ID:        id,
+func UserRepo2Domain(r types.User) *domain.User {
+	return &domain.User{
+		ID:        r.ID,
 		Name:      r.Name,
 		Email:     r.Email,
 		Password:  r.Password,
