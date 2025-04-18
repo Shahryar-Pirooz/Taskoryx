@@ -4,15 +4,15 @@ import (
 	"flag"
 	"os"
 
+	"tasoryx/api/http"
 	"tasoryx/config"
-	"tasoryx/pkg/db"
 	"tasoryx/pkg/logger"
 )
 
 func main() {
 	cfg := setConfig()
 	logger.Init(cfg.Production)
-	db.NewPSQLConnection(cfg.Database)
+	http.Run(cfg.Server)
 }
 
 func setConfig() config.Config {
