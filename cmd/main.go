@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"tasoryx/api/http"
+	"tasoryx/app"
 	"tasoryx/config"
 	"tasoryx/pkg/logger"
 )
@@ -12,7 +13,8 @@ import (
 func main() {
 	cfg := setConfig()
 	logger.Init(cfg.Production)
-	http.Run(cfg.Server)
+	app := app.NewApp(cfg)
+	http.Run(app, cfg.Server)
 }
 
 func setConfig() config.Config {
