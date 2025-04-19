@@ -32,5 +32,6 @@ func Init(isProduction bool) {
 }
 
 func Get() *zap.Logger {
+	Init(false) //TODO: Need to fix this hardcode
 	return logger
 }
