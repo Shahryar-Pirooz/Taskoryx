@@ -35,7 +35,7 @@ func (ur *userRepo) Create(ctx context.Context, data domain.User) (domain.UserID
 }
 func (ur *userRepo) GetByID(ctx context.Context, userID domain.UserID) (*domain.User, error) {
 	user := new(types.User)
-	result := ur.db.WithContext(ctx).First(user, "id = ?")
+	result := ur.db.WithContext(ctx).First(user, "id = ?", userID)
 	userDomain := mapper.UserRepo2Domain(*user)
 	if result.Error != nil {
 		return userDomain, errors.New("failed to get user by id : " + result.Error.Error())
