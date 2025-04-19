@@ -36,7 +36,7 @@ func NewAppContext(parent context.Context, opts ...AppContextOption) context.Con
 	for _, opt := range opts {
 		ctx = opt(ctx)
 	}
-	return appContext{}
+	return ctx
 }
 
 func SetDB(ctx context.Context, db *gorm.DB) {
