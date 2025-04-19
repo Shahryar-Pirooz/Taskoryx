@@ -5,12 +5,12 @@ import (
 )
 
 type User struct {
-	ID        string
+	ID        string `gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name      string
 	Email     string
 	Password  string
 	Role      uint8
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	CreatedAt time.Time `gorm:"autoCreateTime:nano"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime:nano"`
+	DeletedAt time.Time `gorm:"autoDeleteTime:nano"`
 }
