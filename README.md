@@ -1,4 +1,4 @@
-**[![Go](https://img.shields.io/badge/Go-1.24-00ADD8.svg)](https://golang.org)  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-blue.svg)](https://www.postgresql.org)  [![Docker](https://img.shields.io/badge/Docker-20.10-blue.svg)](https://docker.com)  [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Go](https://img.shields.io/badge/Go-1.24-00ADD8.svg)](https://golang.org)  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-blue.svg)](https://www.postgresql.org)  [![Docker](https://img.shields.io/badge/Docker-20.10-blue.svg)](https://docker.com)  [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 # Taskoryx  
 _A Task Management Backend API_
