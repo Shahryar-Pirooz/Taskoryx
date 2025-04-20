@@ -1,8 +1,8 @@
 http:
-    host: localhost
+    host: app
     port: 8080
 database:
-    host: localhost
+    host: db
     name: tskrx
     password: 123
     port: 5432

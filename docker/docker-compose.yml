@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:alpine
+    container_name: tskrx_db
+    restart: always
+    environment:
+      POSTGRES_USER: ess
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: tskrx
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d
+  app:
+    depends_on:
+      - db
+    container_name: tskrx_bk
+    restart: always
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    volumes:
+      - ../config.sample.yml:/app/config.yml
+    ports:
+      - "8080:8080"
+
+volumes:
+    pgdata:
