@@ -42,9 +42,26 @@ func (ur *userRepo) GetByID(ctx context.Context, userID domain.UserID) (*domain.
 	}
 	return userDomain, nil
 }
-func (ur *userRepo) Get(ctx context.Context, filter ...domain.FilterUser) ([]domain.User, error) {
+func (ur *userRepo) Get(ctx context.Context, filters ...domain.FilterUser) ([]domain.User, error) {
 	var users []types.User
-	result := ur.db.WithContext(ctx).Find(&users, filter)
+	var result *gorm.DB
+	dbChain := ur.db.WithContext(ctx).Model(&types.User{})
+
+	if len(filters) > 0 {
+		f := filters[0]
+		if f.Name != "" {
+			dbChain = dbChain.Where("name LIKE ?", "%"+f.Name+"%")
+		}
+		if f.Email != "" {
+			dbChain = dbChain.Where("email LIKE ?", "%"+f.Email+"%")
+		}
+		if f.Role != domain.UserRoleUnknown {
+			dbChain = dbChain.Where("role = ?", f.Role)
+		}
+	}
+
+	result = dbChain.Find(&users)
+
 	if result.Error != nil {
 		return nil, errors.New("failed to get users : " + result.Error.Error())
 	}

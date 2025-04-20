@@ -18,8 +18,6 @@ func Run(appContainer app.App, cfg config.ServerConfig) error {
 
 func setupRoutes(router fiber.Router, appContainer app.App) {
 	task := router.Group("/tasks")
-	task.Get("/", func(ctx fiber.Ctx) error {
-		return ctx.SendString("All Tasks are return")
-	})
+	task.Get("/", handlers.GetUsers(appContainer))
 	task.Get("/:id", handlers.GetUserByID(appContainer))
 }

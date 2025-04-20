@@ -29,10 +29,9 @@ type User struct {
 }
 
 type FilterUser struct {
-	Name     string
-	Email    string
-	Password string
-	Role     UserRole
+	Name  string
+	Email string
+	Role  UserRole
 }
 
 func (u UserRole) isValid() bool {
