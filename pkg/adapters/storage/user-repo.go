@@ -48,15 +48,15 @@ func (ur *userRepo) Get(ctx context.Context, filters ...domain.FilterUser) ([]do
 	dbChain := ur.db.WithContext(ctx).Model(&types.User{})
 
 	if len(filters) > 0 {
-		f := filters[0]
-		if f.Name != "" {
-			dbChain = dbChain.Where("name LIKE ?", "%"+f.Name+"%")
+		filter := filters[0]
+		if filter.Name != "" {
+			dbChain = dbChain.Where("name LIKE ?", "%"+filter.Name+"%")
 		}
-		if f.Email != "" {
-			dbChain = dbChain.Where("email LIKE ?", "%"+f.Email+"%")
+		if filter.Email != "" {
+			dbChain = dbChain.Where("email LIKE ?", "%"+filter.Email+"%")
 		}
-		if f.Role != domain.UserRoleUnknown {
-			dbChain = dbChain.Where("role = ?", f.Role)
+		if filter.Role != domain.UserRoleUnknown {
+			dbChain = dbChain.Where("role = ?", filter.Role)
 		}
 	}
 
