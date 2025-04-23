@@ -7,7 +7,7 @@ import (
 type User struct {
 	ID        string `gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name      string
-	Email     string
+	Email     string `gorm:"unique"`
 	Password  string
 	Role      uint8
 	CreatedAt time.Time `gorm:"autoCreateTime:nano"`
