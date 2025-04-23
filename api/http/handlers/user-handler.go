@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"net/http"
 	"tasoryx/app"
 	"tasoryx/internal/user/domain"
 	"tasoryx/pkg/context"
@@ -22,19 +21,19 @@ func GetUserByID(appContainer app.App) fiber.Handler {
 		if err != nil {
 			logger.Error(err.Error())
 			response = &Res{
-				Status: http.StatusBadRequest,
+				Status: fiber.StatusBadRequest,
 				Msg:    err.Error(),
 				Data:   nil,
 			}
-			return c.Status(http.StatusBadRequest).JSON(response)
+			return c.Status(fiber.StatusBadRequest).JSON(response)
 		}
 		response = &Res{
-			Status: http.StatusOK,
+			Status: fiber.StatusOK,
 			Msg:    "success",
 			Data:   user,
 		}
 		logger.Info("Get data success : " + user.ID)
-		return c.Status(http.StatusOK).JSON(response)
+		return c.Status(fiber.StatusOK).JSON(response)
 	}
 }
 
@@ -61,10 +60,35 @@ func GetUsers(appContainer app.App) fiber.Handler {
 		if err != nil {
 		}
 		response = &Res{
-			Status: http.StatusOK,
+			Status: fiber.StatusOK,
 			Msg:    "success",
 			Data:   users,
 		}
-		return c.Status(http.StatusOK).JSON(response)
+		return c.Status(fiber.StatusOK).JSON(response)
+	}
+}
+
+func CreateNewUser(appContainer app.App) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		request := new(domain.User)
+		response := new(Res)
+		if err := c.Bind().Body(request); err != nil {
+			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		}
+		ctx := context.NewAppContext(c.Context())
+		service := appContainer.UserService(ctx)
+		userID, err := service.CreateUser(ctx, *request)
+		if err != nil {
+			response.Msg = err.Error()
+			response.Status = fiber.StatusBadGateway
+			return c.Status(fiber.StatusBadGateway).JSON(response)
+		}
+		request.ID = userID
+		response = &Res{
+			Status: fiber.StatusOK,
+			Msg:    "success",
+			Data:   request,
+		}
+		return c.Status(fiber.StatusOK).JSON(response)
 	}
 }
