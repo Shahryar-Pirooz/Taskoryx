@@ -21,5 +21,5 @@ func setupRoutes(router fiber.Router, appContainer app.App) {
 	task.Get("/", handlers.GetUsers(appContainer))
 	//TODO: return a null object first of all requests
 	task.Get("/:id", handlers.GetUserByID(appContainer))
-	task.Post("/new", handlers.CreateNewUser(appContainer))
+	task.Post("/", handlers.CreateNewUser(appContainer))
 }

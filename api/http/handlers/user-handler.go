@@ -92,3 +92,9 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 		return c.Status(fiber.StatusOK).JSON(response)
 	}
 }
+
+func UpdateUser(appContainer app.App) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		return nil
+	}
+}
