@@ -95,6 +95,56 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 
 func UpdateUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		return nil
+		request := new(domain.User)
+		response := new(Res)
+		if err := c.Bind().Body(request); err != nil {
+			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+		}
+		ctx := context.NewAppContext(c.Context())
+		service := appContainer.UserService(ctx)
+		id := c.Params("id")
+		err := service.UpdateUser(ctx, id, *request)
+		if err != nil {
+			logger.Error(err.Error())
+			response = &Res{
+				Status: fiber.StatusBadRequest,
+				Msg:    err.Error(),
+				Data:   nil,
+			}
+			return c.Status(fiber.StatusBadRequest).JSON(response)
+		}
+		response = &Res{
+			Status: fiber.StatusOK,
+			Msg:    "success",
+			Data:   nil,
+		}
+		logger.Info("Update data success : " + id)
+		return c.Status(fiber.StatusOK).JSON(response)
+	}
+}
+
+func DeleteUser(appContainer app.App) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		response := new(Res)
+		ctx := context.NewAppContext(c.Context())
+		service := appContainer.UserService(ctx)
+		id := c.Params("id")
+		err := service.DeleteUser(ctx, id)
+		if err != nil {
+			logger.Error(err.Error())
+			response = &Res{
+				Status: fiber.StatusBadRequest,
+				Msg:    err.Error(),
+				Data:   nil,
+			}
+			return c.Status(fiber.StatusBadRequest).JSON(response)
+		}
+		response = &Res{
+			Status: fiber.StatusOK,
+			Msg:    "success",
+			Data:   nil,
+		}
+		logger.Info("Delete data success : " + id)
+		return c.Status(fiber.StatusOK).JSON(response)
 	}
 }
