@@ -12,19 +12,28 @@ import (
 var logger = appLogger.Get().Named("handlers")
 
 func handleError(err error, c fiber.Ctx) error {
-	logger.Error(err.Error())
 	response := &Res{
 		Status: fiber.StatusBadRequest,
 		Msg:    err.Error(),
 		Data:   nil,
 	}
+	logger.Error(err.Error())
 	return c.Status(fiber.StatusBadRequest).JSON(response)
+}
+
+func handleSuccess(c fiber.Ctx, data any, msg string) error {
+	response := &Res{
+		Status: fiber.StatusOK,
+		Msg:    "success",
+		Data:   data,
+	}
+	logger.Info(msg)
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
 // GetUserByID retrieves a user by ID
 func GetUserByID(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		response := new(Res)
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
 		id := c.Params("id")
@@ -32,20 +41,13 @@ func GetUserByID(appContainer app.App) fiber.Handler {
 		if err != nil {
 			return handleError(err, c)
 		}
-		response = &Res{
-			Status: fiber.StatusOK,
-			Msg:    "success",
-			Data:   user,
-		}
-		logger.Info("Get data success : " + user.ID)
-		return c.Status(fiber.StatusOK).JSON(response)
+		return handleSuccess(c, user, "User retrieved successfully")
 	}
 }
 
 // GetUsers retrieves a list of users based on filters
 func GetUsers(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		response := new(Res)
 		filters := new(domain.FilterUser)
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
@@ -58,12 +60,7 @@ func GetUsers(appContainer app.App) fiber.Handler {
 		if err != nil {
 			return handleError(err, c)
 		}
-		response = &Res{
-			Status: fiber.StatusOK,
-			Msg:    "success",
-			Data:   users,
-		}
-		return c.Status(fiber.StatusOK).JSON(response)
+		return handleSuccess(c, users, "Users retrieved successfully")
 	}
 }
 
@@ -71,7 +68,6 @@ func GetUsers(appContainer app.App) fiber.Handler {
 func CreateNewUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		request := new(domain.User)
-		response := new(Res)
 		if err := c.Bind().Body(request); err != nil {
 			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 		}
@@ -82,12 +78,7 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 			return handleError(err, c)
 		}
 		request.ID = userID
-		response = &Res{
-			Status: fiber.StatusOK,
-			Msg:    "success",
-			Data:   request,
-		}
-		return c.Status(fiber.StatusOK).JSON(response)
+		return handleSuccess(c, request, "User created successfully")
 	}
 }
 
@@ -106,12 +97,6 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 		if err != nil {
 			return handleError(err, c)
 		}
-		response = &Res{
-			Status: fiber.StatusOK,
-			Msg:    "success",
-			Data:   nil,
-		}
-		logger.Info("Update data success : " + id)
-		return c.Status(fiber.StatusOK).JSON(response)
+		return handleSuccess(c, response, "User updated successfully")
 	}
 }
