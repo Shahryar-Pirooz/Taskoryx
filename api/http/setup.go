@@ -19,7 +19,6 @@ func Run(appContainer app.App, cfg config.ServerConfig) error {
 func setupRoutes(router fiber.Router, appContainer app.App) {
 	task := router.Group("/users")
 	task.Get("/", handlers.GetUsers(appContainer))
-	//TODO: return a null object first of all requests
 	task.Get("/:id", handlers.GetUserByID(appContainer))
 	task.Post("/", handlers.CreateNewUser(appContainer))
 }

@@ -11,6 +11,17 @@ import (
 
 var logger = appLogger.Get().Named("handlers")
 
+func handleError(err error, response *Res, c fiber.Ctx) error {
+	logger.Error(err.Error())
+	response = &Res{
+		Status: fiber.StatusBadRequest,
+		Msg:    err.Error(),
+		Data:   nil,
+	}
+	return c.Status(fiber.StatusBadRequest).JSON(response)
+}
+
+// GetUserByID retrieves a user by ID
 func GetUserByID(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		response := new(Res)
@@ -19,13 +30,7 @@ func GetUserByID(appContainer app.App) fiber.Handler {
 		id := c.Params("id")
 		user, err := service.GetUserInfo(ctx, id)
 		if err != nil {
-			logger.Error(err.Error())
-			response = &Res{
-				Status: fiber.StatusBadRequest,
-				Msg:    err.Error(),
-				Data:   nil,
-			}
-			return c.Status(fiber.StatusBadRequest).JSON(response)
+			return handleError(err, response, c)
 		}
 		response = &Res{
 			Status: fiber.StatusOK,
@@ -37,6 +42,7 @@ func GetUserByID(appContainer app.App) fiber.Handler {
 	}
 }
 
+// GetUsers retrieves a list of users based on filters
 func GetUsers(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		response := new(Res)
@@ -48,16 +54,9 @@ func GetUsers(appContainer app.App) fiber.Handler {
 				"error": "Invalid query parameters",
 			})
 		}
-		var (
-			users []domain.User
-			err   error
-		)
-		if *filters != (domain.FilterUser{}) {
-			users, err = service.GetUsers(ctx, *filters)
-		} else {
-			users, err = service.GetUsers(ctx)
-		}
+		users, err := service.GetUsers(ctx, *filters)
 		if err != nil {
+			return handleError(err, response, c)
 		}
 		response = &Res{
 			Status: fiber.StatusOK,
@@ -68,6 +67,7 @@ func GetUsers(appContainer app.App) fiber.Handler {
 	}
 }
 
+// CreateUser creates a new user
 func CreateNewUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		request := new(domain.User)
@@ -79,9 +79,7 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 		service := appContainer.UserService(ctx)
 		userID, err := service.CreateUser(ctx, *request)
 		if err != nil {
-			response.Msg = err.Error()
-			response.Status = fiber.StatusBadGateway
-			return c.Status(fiber.StatusBadGateway).JSON(response)
+			return handleError(err, response, c)
 		}
 		request.ID = userID
 		response = &Res{
@@ -93,6 +91,7 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 	}
 }
 
+// UpdateUser updates an existing user
 func UpdateUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		request := new(domain.User)
@@ -103,15 +102,9 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
 		id := c.Params("id")
-		err := service.UpdateUser(ctx, id, *request)
+		err := service.UpdateUser(ctx, *request, id)
 		if err != nil {
-			logger.Error(err.Error())
-			response = &Res{
-				Status: fiber.StatusBadRequest,
-				Msg:    err.Error(),
-				Data:   nil,
-			}
-			return c.Status(fiber.StatusBadRequest).JSON(response)
+			return handleError(err, response, c)
 		}
 		response = &Res{
 			Status: fiber.StatusOK,
@@ -119,32 +112,6 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 			Data:   nil,
 		}
 		logger.Info("Update data success : " + id)
-		return c.Status(fiber.StatusOK).JSON(response)
-	}
-}
-
-func DeleteUser(appContainer app.App) fiber.Handler {
-	return func(c fiber.Ctx) error {
-		response := new(Res)
-		ctx := context.NewAppContext(c.Context())
-		service := appContainer.UserService(ctx)
-		id := c.Params("id")
-		err := service.DeleteUser(ctx, id)
-		if err != nil {
-			logger.Error(err.Error())
-			response = &Res{
-				Status: fiber.StatusBadRequest,
-				Msg:    err.Error(),
-				Data:   nil,
-			}
-			return c.Status(fiber.StatusBadRequest).JSON(response)
-		}
-		response = &Res{
-			Status: fiber.StatusOK,
-			Msg:    "success",
-			Data:   nil,
-		}
-		logger.Info("Delete data success : " + id)
 		return c.Status(fiber.StatusOK).JSON(response)
 	}
 }
