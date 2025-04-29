@@ -11,9 +11,9 @@ import (
 
 var logger = appLogger.Get().Named("handlers")
 
-func handleError(err error, response *Res, c fiber.Ctx) error {
+func handleError(err error, c fiber.Ctx) error {
 	logger.Error(err.Error())
-	response = &Res{
+	response := &Res{
 		Status: fiber.StatusBadRequest,
 		Msg:    err.Error(),
 		Data:   nil,
@@ -30,7 +30,7 @@ func GetUserByID(appContainer app.App) fiber.Handler {
 		id := c.Params("id")
 		user, err := service.GetUserInfo(ctx, id)
 		if err != nil {
-			return handleError(err, response, c)
+			return handleError(err, c)
 		}
 		response = &Res{
 			Status: fiber.StatusOK,
@@ -56,7 +56,7 @@ func GetUsers(appContainer app.App) fiber.Handler {
 		}
 		users, err := service.GetUsers(ctx, *filters)
 		if err != nil {
-			return handleError(err, response, c)
+			return handleError(err, c)
 		}
 		response = &Res{
 			Status: fiber.StatusOK,
@@ -79,7 +79,7 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 		service := appContainer.UserService(ctx)
 		userID, err := service.CreateUser(ctx, *request)
 		if err != nil {
-			return handleError(err, response, c)
+			return handleError(err, c)
 		}
 		request.ID = userID
 		response = &Res{
@@ -104,7 +104,7 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 		id := c.Params("id")
 		err := service.UpdateUser(ctx, *request, id)
 		if err != nil {
-			return handleError(err, response, c)
+			return handleError(err, c)
 		}
 		response = &Res{
 			Status: fiber.StatusOK,
