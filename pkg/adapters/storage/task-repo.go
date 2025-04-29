@@ -33,7 +33,7 @@ func (tr *taskRepo) Create(ctx context.Context, data domain.Task) (domain.TaskID
 }
 func (tr *taskRepo) GetByID(ctx context.Context, taskID domain.TaskID) (*domain.Task, error) {
 	task := new(types.Task)
-	result := tr.db.WithContext(ctx).First(task, "id = ?")
+	result := tr.db.WithContext(ctx).First(task, "id = ?", taskID)
 	taskDomain := mapper.TaskRepo2Domain(*task)
 	if result.Error != nil {
 		return taskDomain, errors.New("failed to get task by id : " + result.Error.Error())

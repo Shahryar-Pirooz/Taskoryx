@@ -36,5 +36,5 @@ func setupTaskRoutes(router fiber.Router, appContainer app.App) {
 	task.Get("/:id", handlers.GetTaskByID(appContainer))
 	task.Post("/", handlers.CreateNewTask(appContainer))
 	task.Put("/:id", handlers.UpdateTask(appContainer))
-	// TODO: deleteTask
+	task.Delete("/:id", handlers.DeleteTask(appContainer))
 }
