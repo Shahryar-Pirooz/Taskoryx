@@ -16,7 +16,7 @@ func GetUserByID(appContainer app.App) fiber.Handler {
 		id := c.Params("id")
 		user, err := service.GetUserInfo(ctx, id)
 		if err != nil {
-			return handleError(err, c)
+			return handleError(err, c, fiber.StatusNotFound)
 		}
 		return handleSuccess(c, user, "User retrieved successfully")
 	}
@@ -35,7 +35,7 @@ func GetUsers(appContainer app.App) fiber.Handler {
 		}
 		users, err := service.GetUsers(ctx, *filters)
 		if err != nil {
-			return handleError(err, c)
+			return handleError(err, c, fiber.StatusNotFound)
 		}
 		return handleSuccess(c, users, "Users retrieved successfully")
 	}
@@ -52,7 +52,7 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 		service := appContainer.UserService(ctx)
 		userID, err := service.CreateUser(ctx, *request)
 		if err != nil {
-			return handleError(err, c)
+			return handleError(err, c, fiber.StatusInternalServerError)
 		}
 		request.ID = userID
 		return handleSuccess(c, request, "User created successfully")
@@ -72,7 +72,7 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 		id := c.Params("id")
 		err := service.UpdateUser(ctx, *request, id)
 		if err != nil {
-			return handleError(err, c)
+			return handleError(err, c, fiber.StatusInternalServerError)
 		}
 		return handleSuccess(c, response, "User updated successfully")
 	}

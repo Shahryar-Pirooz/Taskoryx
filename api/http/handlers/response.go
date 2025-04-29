@@ -14,14 +14,14 @@ type Res struct {
 
 var logger = appLogger.Get().Named("handlers")
 
-func handleError(err error, c fiber.Ctx) error {
+func handleError(err error, c fiber.Ctx, status int) error {
 	response := &Res{
-		Status: fiber.StatusBadRequest,
+		Status: status,
 		Msg:    err.Error(),
 		Data:   nil,
 	}
 	logger.Error(err.Error())
-	return c.Status(fiber.StatusBadRequest).JSON(response)
+	return c.Status(status).JSON(response)
 }
 
 func handleSuccess(c fiber.Ctx, data any, msg string) error {

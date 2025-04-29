@@ -39,3 +39,18 @@ func (s *service) GetTasks(ctx context.Context, filters ...taskDomain.FilterTask
 	}
 	return tasks, nil
 }
+
+func (s *service) GetTaskByID(ctx context.Context, ID taskDomain.TaskID) (*taskDomain.Task, error) {
+	task, err := s.repo.GetByID(ctx, ID)
+	if err != nil {
+		return nil, fmt.Errorf("cannot get task by ID : %w", err)
+	}
+	return task, nil
+}
+
+func (s *service) DeleteTask(ctx context.Context, ID taskDomain.TaskID) error {
+	if err := s.repo.Delete(ctx, ID); err != nil {
+		return fmt.Errorf("cannot delete task : %w", err)
+	}
+	return nil
+}
