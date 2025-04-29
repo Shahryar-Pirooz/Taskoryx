@@ -4,32 +4,9 @@ import (
 	"tasoryx/app"
 	"tasoryx/internal/user/domain"
 	"tasoryx/pkg/context"
-	appLogger "tasoryx/pkg/logger"
 
 	"github.com/gofiber/fiber/v3"
 )
-
-var logger = appLogger.Get().Named("handlers")
-
-func handleError(err error, c fiber.Ctx) error {
-	response := &Res{
-		Status: fiber.StatusBadRequest,
-		Msg:    err.Error(),
-		Data:   nil,
-	}
-	logger.Error(err.Error())
-	return c.Status(fiber.StatusBadRequest).JSON(response)
-}
-
-func handleSuccess(c fiber.Ctx, data any, msg string) error {
-	response := &Res{
-		Status: fiber.StatusOK,
-		Msg:    "success",
-		Data:   data,
-	}
-	logger.Info(msg)
-	return c.Status(fiber.StatusOK).JSON(response)
-}
 
 // GetUserByID retrieves a user by ID
 func GetUserByID(appContainer app.App) fiber.Handler {

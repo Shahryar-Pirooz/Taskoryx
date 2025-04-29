@@ -17,8 +17,24 @@ func Run(appContainer app.App, cfg config.ServerConfig) error {
 }
 
 func setupRoutes(router fiber.Router, appContainer app.App) {
-	task := router.Group("/users")
-	task.Get("/", handlers.GetUsers(appContainer))
-	task.Get("/:id", handlers.GetUserByID(appContainer))
-	task.Post("/", handlers.CreateNewUser(appContainer))
+	setupUserRoutes(router, appContainer)
+	setupTaskRoutes(router, appContainer)
+}
+
+func setupUserRoutes(router fiber.Router, appContainer app.App) {
+	user := router.Group("/users")
+	user.Get("/", handlers.GetUsers(appContainer))
+	user.Get("/:id", handlers.GetUserByID(appContainer))
+	user.Post("/", handlers.CreateNewUser(appContainer))
+	user.Put("/:id", handlers.UpdateUser(appContainer))
+	// TODO: getUserByEmail and deleteUser
+}
+
+func setupTaskRoutes(router fiber.Router, appContainer app.App) {
+	task := router.Group("/tasks")
+	task.Get("/", handlers.GetTasks(appContainer))
+	task.Get("/:id", handlers.GetTaskByID(appContainer))
+	task.Post("/", handlers.CreateNewTask(appContainer))
+	task.Put("/:id", handlers.UpdateTask(appContainer))
+	// TODO: deleteTask
 }
