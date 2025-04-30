@@ -10,6 +10,7 @@ import (
 	"tasoryx/pkg/fp"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +26,11 @@ func NewUserRepo(db *gorm.DB) port.Repo {
 
 func (ur *userRepo) Create(ctx context.Context, data domain.User) (domain.UserID, error) {
 	user := mapper.UserDomain2Repo(data)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", errors.New("failed to hash password")
+	}
+	user.Password = string(hashedPassword)
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 	result := ur.db.WithContext(ctx).Create(user)
