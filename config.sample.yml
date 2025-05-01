@@ -8,3 +8,4 @@ database:
     port: 5432
     user: ess
 production: false
+jwt-secret: 123456789

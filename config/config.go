@@ -4,6 +4,7 @@ type Config struct {
 	Server     ServerConfig `mapstructure:"http"`
 	Database   Database     `mapstructure:"database"`
 	Production bool         `mapstructure:"production"`
+	JwtSecret  string       `mapstructure:"jwt_secret"`
 }
 
 type ServerConfig struct {
