@@ -14,7 +14,9 @@ func main() {
 	cfg := setConfig()
 	logger.Init(cfg.Production)
 	app := app.NewApp(cfg)
-	http.Run(app, cfg.Server)
+	if err := http.Run(app, cfg.Server); err != nil {
+		logger.Get().Error(err.Error())
+	}
 }
 
 func setConfig() config.Config {
