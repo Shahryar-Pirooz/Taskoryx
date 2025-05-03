@@ -173,15 +173,6 @@ docker-compose up -d
 
 ---
 
-## 📌 TODO
-- [ ] Need Handlers
-- [ ] Need docker-compose
-- [ ] Need group for each tasks
-- [ ] Need add tasks for each user
-- [ ] Need make file
-
----
-
 ## 🤝 Contributing
 Feel free to pull a request!✨
 
