@@ -1,3 +1,11 @@
 {
-	"cSpell.words": ["TASKORYX"]
+	"cSpell.words": [
+		"TASKORYX"
+	],
+	"github.copilot.enable": {
+		"*": false,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false
+	}
 }
