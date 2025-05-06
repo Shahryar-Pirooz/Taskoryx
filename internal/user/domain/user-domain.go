@@ -38,7 +38,7 @@ func (u UserRole) isValid() bool {
 	return u == UserRoleAdmin || u == UserRoleUser
 }
 
-func passwordValidation(pass string) []string {
+func PasswordValidation(pass string) []string {
 	var errs []string
 	if len(pass) < 8 {
 		errs = append(errs, "password must be at least 8 characters long")
@@ -55,25 +55,36 @@ func passwordValidation(pass string) []string {
 	return errs
 }
 
+func EmailValidation(email string) []string {
+	var errs []string
+	if len(email) > 1 {
+		if match, _ := regexp.MatchString(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, email); !match {
+			errs = append(errs, "invalid email format")
+		}
+	} else {
+		errs = append(errs, "email is required")
+	}
+	return errs
+}
+
 func (u User) Validate() error {
 	var errs []string
 
 	if len(u.Name) < 1 {
 		errs = append(errs, "name is required")
 	}
-	if len(u.Email) > 1 {
-		if match, _ := regexp.MatchString(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, u.Email); !match {
-			errs = append(errs, "invalid email format")
-		}
-	} else {
-		errs = append(errs, "email is required")
+
+	ev := EmailValidation(u.Email)
+
+	if len(ev) > 0 {
+		errs = append(errs, ev...)
 	}
 
 	if !u.Role.isValid() {
 		errs = append(errs, fmt.Sprintf("status '%d' is invalid", u.Role))
 	}
 
-	pv := passwordValidation(u.Password)
+	pv := PasswordValidation(u.Password)
 
 	if len(pv) > 0 {
 		errs = append(errs, pv...)

@@ -10,4 +10,5 @@ type Service interface {
 	UpdateUser(ctx context.Context, user domain.User, ID domain.UserID) error
 	GetUserInfo(ctx context.Context, ID domain.UserID) (*domain.User, error)
 	GetUsers(ctx context.Context, filters ...domain.FilterUser) ([]domain.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*domain.User, error)
 }

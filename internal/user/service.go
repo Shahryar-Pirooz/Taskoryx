@@ -18,6 +18,9 @@ func NewService(repo port.Repo) port.Service {
 }
 
 func (s *service) CreateUser(ctx context.Context, user domain.User) (domain.UserID, error) {
+	if err := user.Validate(); err != nil {
+		return "", fmt.Errorf("user is not valid : %w", err)
+	}
 	id, err := s.repo.Create(ctx, user)
 	if err != nil {
 		return "", fmt.Errorf("cannot create user : %w", err)
@@ -25,6 +28,9 @@ func (s *service) CreateUser(ctx context.Context, user domain.User) (domain.User
 	return id, nil
 }
 func (s *service) UpdateUser(ctx context.Context, user domain.User, ID domain.UserID) error {
+	if err := user.Validate(); err != nil {
+		return fmt.Errorf("user is not valid : %w", err)
+	}
 	if err := s.repo.Update(ctx, user, ID); err != nil {
 		return fmt.Errorf("cannot update user : %w", err)
 	}
@@ -43,4 +49,13 @@ func (s *service) GetUsers(ctx context.Context, filters ...domain.FilterUser) ([
 		return nil, fmt.Errorf("cannot get data : %w", err)
 	}
 	return users, nil
+}
+
+func (s *service) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+	filter := domain.FilterUser{Email: email}
+	users, err := s.repo.Get(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("cannot get user by email : %w", err)
+	}
+	return &users[0], nil
 }
