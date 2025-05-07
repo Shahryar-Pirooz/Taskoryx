@@ -1,11 +1,13 @@
 http:
-    host: app
+    host: localhost
     port: 8080
 database:
-    host: db
+    host: localhost
     name: tskrx
     password: 123
     port: 5432
     user: ess
 production: false
-jwt-secret: 123456789
+jwt:
+    access_key: secretKeyForJWT
+    refresh_key: AnotherSecretKey

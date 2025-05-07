@@ -12,6 +12,13 @@ type Res struct {
 	Data   any    `json:"data"`
 }
 
+type UserRes struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  int8   `json:"role"`
+}
+
 var logger = appLogger.Get().Named("handlers")
 
 func handleError(err error, c fiber.Ctx, status int) error {

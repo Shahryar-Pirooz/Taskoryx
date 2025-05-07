@@ -4,7 +4,7 @@ type Config struct {
 	Server     ServerConfig `mapstructure:"http"`
 	Database   Database     `mapstructure:"database"`
 	Production bool         `mapstructure:"production"`
-	JwtSecret  string       `mapstructure:"jwt_secret"`
+	Jwt        JWT          `mapstructure:"jwt"`
 }
 
 type ServerConfig struct {
@@ -18,4 +18,9 @@ type Database struct {
 	Password string `mapstructure:"password"`
 	Port     string `mapstructure:"port"`
 	User     string `mapstructure:"user"`
+}
+
+type JWT struct {
+	Access_key  string `mapstructure:"access_key"`
+	Refresh_key string `mapstructure:"refresh_key"`
 }
