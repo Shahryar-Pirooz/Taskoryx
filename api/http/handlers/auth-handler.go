@@ -34,9 +34,8 @@ func Login(appContainer app.App) fiber.Handler {
 			return handleError(err, c, fiber.StatusInternalServerError)
 		}
 		data := struct {
-			user         UserRes
-			accessToken  string
-			refreshToken string
+			user        UserRes
+			accessToken string
 		}{
 			user: UserRes{
 				ID:    user.ID,
@@ -44,12 +43,17 @@ func Login(appContainer app.App) fiber.Handler {
 				Email: user.Email,
 				Role:  int8(user.Role),
 			},
-			accessToken:  accToken,
-			refreshToken: refToken,
+			accessToken: accToken,
 		}
+		c.Cookie(&fiber.Cookie{
+			Expires:  time.Now().Add(time.Hour * 24 * 7),
+			Name:     "ref",
+			Value:    refToken,
+			Secure:   true,
+			HTTPOnly: true,
+		})
 		return handleSuccess(c, data, "Login successful")
 	}
 }
 
 // TODO: Store refresh tokens in DB or Redis to support revocation and logout
-// TODO: Set refresh token as secure HTTP-only cookie instead of returning in JSON
