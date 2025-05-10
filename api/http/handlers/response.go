@@ -21,7 +21,7 @@ type UserRes struct {
 
 var logger = appLogger.Get().Named("handlers")
 
-func handleError(err error, c fiber.Ctx, status int) error {
+func HandleError(err error, c fiber.Ctx, status int) error {
 	response := &Res{
 		Status: status,
 		Msg:    err.Error(),
@@ -31,7 +31,7 @@ func handleError(err error, c fiber.Ctx, status int) error {
 	return c.Status(status).JSON(response)
 }
 
-func handleSuccess(c fiber.Ctx, data any, msg string) error {
+func HandleSuccess(c fiber.Ctx, data any, msg string) error {
 	response := &Res{
 		Status: fiber.StatusOK,
 		Msg:    "success",

@@ -14,24 +14,24 @@ func Login(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		request := new(LoginReq)
 		if err := c.Bind().Body(request); err != nil {
-			return handleError(err, c, fiber.StatusBadRequest)
+			return HandleError(err, c, fiber.StatusBadRequest)
 		}
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
 		user, err := service.GetUserByEmail(ctx, request.Email)
 		if err != nil {
-			return handleError(err, c, fiber.StatusBadGateway)
+			return HandleError(err, c, fiber.StatusBadGateway)
 		}
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
-			return handleError(err, c, fiber.StatusUnauthorized)
+			return HandleError(err, c, fiber.StatusUnauthorized)
 		}
 		accToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.Access_key, time.Minute*15)
 		if err != nil {
-			return handleError(err, c, fiber.StatusInternalServerError)
+			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
 		refToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.Refresh_key, time.Hour*24*7)
 		if err != nil {
-			return handleError(err, c, fiber.StatusInternalServerError)
+			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
 		data := struct {
 			user        UserRes
@@ -52,7 +52,7 @@ func Login(appContainer app.App) fiber.Handler {
 			Secure:   true,
 			HTTPOnly: true,
 		})
-		return handleSuccess(c, data, "Login successful")
+		return HandleSuccess(c, data, "Login successful")
 	}
 }
 

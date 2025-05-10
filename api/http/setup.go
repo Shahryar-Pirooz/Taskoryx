@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"tasoryx/api/http/handlers"
+	"tasoryx/api/http/middlewares"
 	"tasoryx/app"
 	"tasoryx/config"
 	log "tasoryx/pkg/logger"
@@ -35,14 +36,14 @@ func setupUserRoutes(router fiber.Router, appContainer app.App) {
 	logger.Info("Configuring user routes...")
 	user.Get("/", handlers.GetUsers(appContainer))
 	user.Get("/:id", handlers.GetUserByID(appContainer))
+	user.Get("/:email", handlers.GetUserByEmail(appContainer))
 	user.Post("/", handlers.CreateNewUser(appContainer))
 	user.Put("/:id", handlers.UpdateUser(appContainer))
-	// TODO: getUserByEmail and deleteUser
 	logger.Info("User routes configured.")
 }
 
 func setupTaskRoutes(router fiber.Router, appContainer app.App) {
-	task := router.Group("/tasks")
+	task := router.Group("/tasks", middlewares.RequireAuth(appContainer))
 	logger.Info("Configuring task routes...")
 	task.Get("/", handlers.GetTasks(appContainer))
 	task.Get("/:id", handlers.GetTaskByID(appContainer))
