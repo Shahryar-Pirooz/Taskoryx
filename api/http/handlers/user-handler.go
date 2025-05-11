@@ -29,9 +29,7 @@ func GetUsers(appContainer app.App) fiber.Handler {
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
 		if err := c.Bind().Query(filters); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "Invalid query parameters",
-			})
+			return HandleError(err, c, fiber.StatusBadRequest)
 		}
 		users, err := service.GetUsers(ctx, *filters)
 		if err != nil {
@@ -43,8 +41,17 @@ func GetUsers(appContainer app.App) fiber.Handler {
 
 func GetUserByEmail(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		// TODO :
-		return nil
+		request := new(domain.User)
+		if err := c.Bind().Body(request); err != nil {
+			return HandleError(err, c, fiber.StatusBadRequest)
+		}
+		ctx := context.NewAppContext(c.Context())
+		service := appContainer.UserService(ctx)
+		user, err := service.GetUserByEmail(ctx, request.Email)
+		if err != nil {
+			return HandleError(err, c, fiber.StatusInternalServerError)
+		}
+		return HandleSuccess(c, user, "User retrieved successfully")
 	}
 }
 
@@ -53,7 +60,7 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		request := new(domain.User)
 		if err := c.Bind().Body(request); err != nil {
-			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+			return HandleError(err, c, fiber.StatusBadRequest)
 		}
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
@@ -72,7 +79,7 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 		request := new(domain.User)
 		response := new(Res)
 		if err := c.Bind().Body(request); err != nil {
-			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+			return HandleError(err, c, fiber.StatusBadRequest)
 		}
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
