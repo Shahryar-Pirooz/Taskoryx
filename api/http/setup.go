@@ -38,6 +38,7 @@ func setupUserRoutes(router fiber.Router, appContainer app.App) {
 	user.Get("/:id", handlers.GetUserByID(appContainer))
 	user.Get("/:email", handlers.GetUserByEmail(appContainer))
 	user.Post("/", handlers.CreateNewUser(appContainer))
+	user.Post("/login", handlers.Login(appContainer))
 	user.Put("/:id", handlers.UpdateUser(appContainer))
 	logger.Info("User routes configured.")
 }

@@ -91,3 +91,10 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 		return HandleSuccess(c, response, "User updated successfully")
 	}
 }
+
+func LoginUser(appContainer app.App) fiber.Handler {
+	return func(c fiber.Ctx) error {
+
+		return nil
+	}
+}
