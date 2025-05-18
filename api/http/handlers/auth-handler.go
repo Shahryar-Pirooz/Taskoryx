@@ -57,3 +57,4 @@ func Login(appContainer app.App) fiber.Handler {
 }
 
 // TODO: Store refresh tokens in DB or Redis to support revocation and logout
+// TODO: Don't need to generate a refresh token if it doesn't expire
