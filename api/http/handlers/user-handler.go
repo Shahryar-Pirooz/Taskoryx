@@ -39,22 +39,6 @@ func GetUsers(appContainer app.App) fiber.Handler {
 	}
 }
 
-func GetUserByEmail(appContainer app.App) fiber.Handler {
-	return func(c fiber.Ctx) error {
-		request := new(domain.User)
-		if err := c.Bind().Body(request); err != nil {
-			return HandleError(err, c, fiber.StatusBadRequest)
-		}
-		ctx := context.NewAppContext(c.Context())
-		service := appContainer.UserService(ctx)
-		user, err := service.GetUserByEmail(ctx, request.Email)
-		if err != nil {
-			return HandleError(err, c, fiber.StatusInternalServerError)
-		}
-		return HandleSuccess(c, user, "User retrieved successfully")
-	}
-}
-
 // CreateUser creates a new user
 func CreateNewUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
@@ -89,12 +73,5 @@ func UpdateUser(appContainer app.App) fiber.Handler {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
 		return HandleSuccess(c, response, "User updated successfully")
-	}
-}
-
-func LoginUser(appContainer app.App) fiber.Handler {
-	return func(c fiber.Ctx) error {
-
-		return nil
 	}
 }
