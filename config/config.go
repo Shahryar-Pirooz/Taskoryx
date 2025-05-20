@@ -21,6 +21,6 @@ type Database struct {
 }
 
 type JWT struct {
-	Access_key  string `mapstructure:"access_key"`
-	Refresh_key string `mapstructure:"refresh_key"`
+	AccessKey  string `mapstructure:"access_key"`
+	RefreshKey string `mapstructure:"refresh_key"`
 }
