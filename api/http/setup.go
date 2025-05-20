@@ -25,10 +25,18 @@ func Run(appContainer app.App, cfg config.ServerConfig) error {
 }
 
 func setupRoutes(router fiber.Router, appContainer app.App) {
+	logger.Info("Setting up auth routes...")
+	setupAuthRoutes(router, appContainer)
 	logger.Info("Setting up user routes...")
 	setupUserRoutes(router, appContainer)
 	logger.Info("Setting up task routes...")
 	setupTaskRoutes(router, appContainer)
+}
+
+func setupAuthRoutes(router fiber.Router, appContainer app.App) {
+	auth := router.Group("/auth")
+	auth.Post("/login", handlers.Login(appContainer))
+	auth.Post("/Refresh", handlers.GetNewAccessToken(appContainer))
 }
 
 func setupUserRoutes(router fiber.Router, appContainer app.App) {
@@ -37,7 +45,6 @@ func setupUserRoutes(router fiber.Router, appContainer app.App) {
 	user.Get("/", handlers.GetUsers(appContainer))
 	user.Get("/:id", handlers.GetUserByID(appContainer))
 	user.Post("/", handlers.CreateNewUser(appContainer))
-	user.Post("/login", handlers.Login(appContainer))
 	user.Put("/:id", handlers.UpdateUser(appContainer))
 	logger.Info("User routes configured.")
 }

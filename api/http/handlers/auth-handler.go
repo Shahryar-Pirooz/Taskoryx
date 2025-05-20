@@ -25,25 +25,25 @@ func Login(appContainer app.App) fiber.Handler {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
 			return HandleError(err, c, fiber.StatusUnauthorized)
 		}
-		accToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.Access_key, time.Minute*15)
+		accToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.AccessKey, time.Minute*15)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
-		refToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.Refresh_key, time.Hour*24*7)
+		refToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.RefreshKey, time.Hour*24*7)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
 		data := struct {
-			user        UserRes
-			accessToken string
+			User        UserRes `json:"user"`
+			AccessToken string  `json:"accessToken"`
 		}{
-			user: UserRes{
+			User: UserRes{
 				ID:    user.ID,
 				Name:  user.Name,
 				Email: user.Email,
 				Role:  int8(user.Role),
 			},
-			accessToken: accToken,
+			AccessToken: accToken,
 		}
 		c.Cookie(&fiber.Cookie{
 			Expires:  time.Now().Add(time.Hour * 24 * 7),
@@ -51,8 +51,33 @@ func Login(appContainer app.App) fiber.Handler {
 			Value:    refToken,
 			Secure:   true,
 			HTTPOnly: true,
+			SameSite: "Strict",
 		})
 		return HandleSuccess(c, data, "Login successful")
+	}
+}
+
+func GetNewAccessToken(appContainer app.App) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		request := new(RefreshTokenReq)
+		if err := c.Bind().Body(request); err != nil {
+			return HandleError(err, c, fiber.StatusBadRequest)
+		}
+		claims, err := jwt.ValidationToken(request.AccessToken, appContainer.Config().Jwt.AccessKey)
+		if err != nil || claims.UserID != request.UserID {
+			return HandleError(err, c, fiber.StatusNonAuthoritativeInformation)
+		}
+		newAccessToken, err := jwt.GenerateToken(claims.UserID, appContainer.Config().Jwt.AccessKey, time.Minute*15)
+		if err != nil {
+			return HandleError(err, c, fiber.StatusInternalServerError)
+		}
+		data := struct {
+			AccessToke string `json:"access_token"`
+		}{
+			AccessToke: newAccessToken,
+		}
+		return HandleSuccess(c, data, "Refresh token generated successfully")
+
 	}
 }
 

@@ -17,7 +17,7 @@ func RequireAuth(appContainer app.App) fiber.Handler {
 			return handlers.HandleError(errors.New("missing or invalid Authorization header"), c, fiber.StatusUnauthorized)
 		}
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
-		claims, err := jwt.ValidationToken(tokenStr, appContainer.Config().Jwt.Access_key)
+		claims, err := jwt.ValidationToken(tokenStr, appContainer.Config().Jwt.AccessKey)
 		if err != nil {
 			return handlers.HandleError(err, c, fiber.StatusUnauthorized)
 		}
