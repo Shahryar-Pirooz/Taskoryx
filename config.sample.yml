@@ -7,7 +7,17 @@ database:
     password: 123
     port: 5432
     user: ess
-production: false
+redis:
+    host:   localhost
+    port:   6379
+    password:   ""
+    db: 0             #default
+    poolsize:   10
+    dialtimeout:    5 #sec
+    readtimeout:    3 #sec
+    writetimeout:   3 #sec
+    idletimeout:    5 #min
 jwt:
     access_key: secretKeyForJWT
     refresh_key: AnotherSecretKey
+production: false
