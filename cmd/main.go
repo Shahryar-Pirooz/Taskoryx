@@ -7,12 +7,14 @@ import (
 	"tasoryx/api/http"
 	"tasoryx/app"
 	"tasoryx/config"
+	"tasoryx/pkg/cache"
 	"tasoryx/pkg/logger"
 )
 
 func main() {
 	cfg := setConfig()
-	logger.Init(cfg.Production)
+	logger.Init(false)
+	cache.Init(cfg.Redis) // TODO: need to review
 	app := app.NewApp(cfg)
 	if err := http.Run(app, cfg.Server); err != nil {
 		logger.Get().Error(err.Error())

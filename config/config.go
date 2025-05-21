@@ -1,11 +1,10 @@
 package config
 
 type Config struct {
-	Server     ServerConfig `mapstructure:"http"`
-	Database   Database     `mapstructure:"database"`
-	Redis      Redis        `mapstructure:"redis"`
-	Jwt        JWT          `mapstructure:"jwt"`
-	Production bool         `mapstructure:"production"`
+	Server   ServerConfig `mapstructure:"http"`
+	Database Database     `mapstructure:"database"`
+	Redis    Redis        `mapstructure:"redis"`
+	Jwt      JWT          `mapstructure:"jwt"`
 }
 
 type ServerConfig struct {
@@ -25,12 +24,11 @@ type Redis struct {
 	Host         string `mapstructure:"host"`
 	Port         string `mapstructure:"port"`
 	Password     string `mapstructure:"password"`
-	DB           string `mapstructure:"db"`
-	PoolSize     string `mapstructure:"poolsize"`
-	DialTimeout  string `mapstructure:"dialtimeout"`
-	ReadTimeout  string `mapstructure:"readtimeout"`
-	WriteTimeout string `mapstructure:"writetimeout"`
-	IdleTimeout  string `mapstructure:"idletimeout"`
+	DB           int    `mapstructure:"db"`
+	PoolSize     int    `mapstructure:"poolsize"`
+	DialTimeout  int    `mapstructure:"dialtimeout"`
+	ReadTimeout  int    `mapstructure:"readtimeout"`
+	WriteTimeout int    `mapstructure:"writetimeout"`
 }
 
 type JWT struct {

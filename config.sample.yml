@@ -20,4 +20,3 @@ redis:
 jwt:
     access_key: secretKeyForJWT
     refresh_key: AnotherSecretKey
-production: false
