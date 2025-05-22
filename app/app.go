@@ -2,15 +2,18 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"tasoryx/config"
 	"tasoryx/internal/task"
 	taskPort "tasoryx/internal/task/port"
 	"tasoryx/internal/user"
 	UserPort "tasoryx/internal/user/port"
 	"tasoryx/pkg/adapters/storage"
+	"tasoryx/pkg/cache"
 	appCtx "tasoryx/pkg/context"
 	appDB "tasoryx/pkg/db"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -19,13 +22,15 @@ type App interface {
 	UserService(ctx context.Context) UserPort.Service
 	DB() *gorm.DB
 	Config() config.Config
+	Cache() *cache.RedisAdapter
 }
 
 type app struct {
-	db          *gorm.DB
-	cfg         config.Config
-	userService UserPort.Service
-	taskService taskPort.Service
+	db           *gorm.DB
+	cfg          config.Config
+	userService  UserPort.Service
+	taskService  taskPort.Service
+	redisAdapter cache.RedisAdapter
 }
 
 func (a *app) userServiceWithDB(db *gorm.DB) UserPort.Service {
@@ -71,10 +76,20 @@ func (a *app) Config() config.Config {
 	return a.cfg
 }
 
+func (a *app) Cache() *cache.RedisAdapter {
+	return &a.redisAdapter
+}
+
 func NewApp(cfg config.Config) App {
 	a := &app{
 		cfg: cfg,
 	}
 	a.setDB()
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", cfg.Redis.Host, cfg.Redis.Port),
+		Password: cfg.Redis.Password,
+		DB:       cfg.Redis.DB,
+	})
+	a.redisAdapter = *cache.NewRedisAdapter(redisClient)
 	return a
 }
