@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"fmt"
 	"tasoryx/app"
 	"tasoryx/pkg/context"
 	"tasoryx/pkg/jwt"
@@ -33,17 +35,12 @@ func Login(appContainer app.App) fiber.Handler {
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
-		data := struct {
-			User        UserRes `json:"user"`
-			AccessToken string  `json:"accessToken"`
-		}{
-			User: UserRes{
-				ID:    user.ID,
-				Name:  user.Name,
-				Email: user.Email,
-				Role:  int8(user.Role),
-			},
-			AccessToken: accToken,
+		c.Set("Authorization", "Bearer "+accToken)
+		data := UserRes{
+			ID:    user.ID,
+			Name:  user.Name,
+			Email: user.Email,
+			Role:  int8(user.Role),
 		}
 		c.Cookie(&fiber.Cookie{
 			Expires:  time.Now().Add(time.Hour * 24 * 7),
@@ -53,33 +50,40 @@ func Login(appContainer app.App) fiber.Handler {
 			HTTPOnly: true,
 			SameSite: "Strict",
 		})
+		key := fmt.Sprintf("AUTH.REFRESH_TOKEN:%s", user.ID)
+		if err := appContainer.Cache().Set(ctx, key, refToken); err != nil {
+			return HandleError(err, c, fiber.StatusBadGateway)
+		}
 		return HandleSuccess(c, data, "Login successful")
 	}
 }
 
 func GetNewAccessToken(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		request := new(RefreshTokenReq)
-		if err := c.Bind().Body(request); err != nil {
-			return HandleError(err, c, fiber.StatusBadRequest)
+		refToken := c.Cookies("ref")
+		if refToken == "" {
+			return HandleError(errors.New("refresh token missing"), c, fiber.StatusUnauthorized)
 		}
-		claims, err := jwt.ValidationToken(request.AccessToken, appContainer.Config().Jwt.AccessKey)
-		if err != nil || claims.UserID != request.UserID {
-			return HandleError(err, c, fiber.StatusNonAuthoritativeInformation)
+
+		claims, err := jwt.ValidationToken(refToken, appContainer.Config().Jwt.RefreshKey)
+		if err != nil {
+			return HandleError(err, c, fiber.StatusUnauthorized)
 		}
+
+		ctx := context.NewAppContext(c.Context())
+
+		key := fmt.Sprintf("AUTH.REFRESH_TOKEN:%s", claims.UserID)
+		storedToken, err := appContainer.Cache().Get(ctx, key)
+		if err != nil || storedToken != refToken {
+			return HandleError(errors.New("refresh token revoked or invalid"), c, fiber.StatusUnauthorized)
+		}
+
 		newAccessToken, err := jwt.GenerateToken(claims.UserID, appContainer.Config().Jwt.AccessKey, time.Minute*15)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
-		data := struct {
-			AccessToke string `json:"access_token"`
-		}{
-			AccessToke: newAccessToken,
-		}
-		return HandleSuccess(c, data, "Refresh token generated successfully")
 
+		c.Set("Authorization", "Bearer "+newAccessToken)
+		return HandleSuccess(c, claims.UserID, "New access token generated")
 	}
 }
-
-// TODO: Store refresh tokens in DB or Redis to support revocation and logout
-// TODO: Don't need to generate a refresh token if it doesn't expire
