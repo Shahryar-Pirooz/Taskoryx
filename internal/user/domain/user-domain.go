@@ -14,8 +14,8 @@ type UserRole int8
 
 const (
 	UserRoleUnknown UserRole = iota
-	UserRoleAdmin
 	UserRoleUser
+	UserRoleAdmin
 )
 
 type User struct {

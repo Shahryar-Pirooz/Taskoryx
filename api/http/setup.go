@@ -6,6 +6,7 @@ import (
 	"tasoryx/api/http/middlewares"
 	"tasoryx/app"
 	"tasoryx/config"
+	"tasoryx/internal/user/domain"
 	log "tasoryx/pkg/logger"
 
 	"github.com/gofiber/fiber/v3"
@@ -50,7 +51,7 @@ func setupUserRoutes(router fiber.Router, appContainer app.App) {
 }
 
 func setupTaskRoutes(router fiber.Router, appContainer app.App) {
-	task := router.Group("/tasks", middlewares.RequireAuth(appContainer))
+	task := router.Group("/tasks", middlewares.RequireAuth(appContainer, int8(domain.UserRoleUser)))
 	logger.Info("Configuring task routes...")
 	task.Get("/", handlers.GetTasks(appContainer))
 	task.Get("/:id", handlers.GetTaskByID(appContainer))

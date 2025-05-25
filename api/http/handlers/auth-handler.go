@@ -27,11 +27,11 @@ func Login(appContainer app.App) fiber.Handler {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
 			return HandleError(err, c, fiber.StatusUnauthorized)
 		}
-		accToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.AccessKey, time.Minute*15)
+		accToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.AccessKey, int8(user.Role), time.Minute*15)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
-		refToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.RefreshKey, time.Hour*24*7)
+		refToken, err := jwt.GenerateToken(user.ID, appContainer.Config().Jwt.RefreshKey, int8(user.Role), time.Hour*24*7)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
@@ -78,7 +78,7 @@ func GetNewAccessToken(appContainer app.App) fiber.Handler {
 			return HandleError(errors.New("refresh token revoked or invalid"), c, fiber.StatusUnauthorized)
 		}
 
-		newAccessToken, err := jwt.GenerateToken(claims.UserID, appContainer.Config().Jwt.AccessKey, time.Minute*15)
+		newAccessToken, err := jwt.GenerateToken(claims.UserID, appContainer.Config().Jwt.AccessKey, claims.Role, time.Minute*15)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
