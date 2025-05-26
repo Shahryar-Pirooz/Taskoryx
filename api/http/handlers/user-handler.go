@@ -42,13 +42,21 @@ func GetUsers(appContainer app.App) fiber.Handler {
 // CreateUser creates a new user
 func CreateNewUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		request := new(domain.User)
+		request := new(UserReq)
 		if err := c.Bind().Body(request); err != nil {
 			return HandleError(err, c, fiber.StatusBadRequest)
 		}
+		// TODO: review this part
+		user := domain.User{
+			ID:       request.ID,
+			Name:     request.Name,
+			Email:    request.Email,
+			Password: request.Password,
+			Role:     domain.UserRole(request.Role),
+		}
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
-		userID, err := service.CreateUser(ctx, *request)
+		userID, err := service.CreateUser(ctx, user)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
@@ -60,15 +68,23 @@ func CreateNewUser(appContainer app.App) fiber.Handler {
 // UpdateUser updates an existing user
 func UpdateUser(appContainer app.App) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		request := new(domain.User)
+		request := new(UserReq)
 		response := new(Res)
 		if err := c.Bind().Body(request); err != nil {
 			return HandleError(err, c, fiber.StatusBadRequest)
 		}
+		// TODO: review this part
+		user := domain.User{
+			ID:       request.ID,
+			Name:     request.Name,
+			Email:    request.Email,
+			Password: request.Password,
+			Role:     domain.UserRole(request.Role),
+		}
 		ctx := context.NewAppContext(c.Context())
 		service := appContainer.UserService(ctx)
 		id := c.Params("id")
-		err := service.UpdateUser(ctx, *request, id)
+		err := service.UpdateUser(ctx, user, id)
 		if err != nil {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
