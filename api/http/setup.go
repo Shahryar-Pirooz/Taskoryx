@@ -37,6 +37,7 @@ func setupRoutes(router fiber.Router, appContainer app.App) {
 func setupAuthRoutes(router fiber.Router, appContainer app.App) {
 	auth := router.Group("/auth")
 	auth.Post("/login", handlers.Login(appContainer))
+	auth.Post("/register", handlers.RegisterUser(appContainer))
 	auth.Post("/Refresh", handlers.GetNewAccessToken(appContainer))
 }
 
@@ -45,8 +46,8 @@ func setupUserRoutes(router fiber.Router, appContainer app.App) {
 	logger.Info("Configuring user routes...")
 	user.Get("/", handlers.GetUsers(appContainer))
 	user.Get("/:id", handlers.GetUserByID(appContainer))
-	user.Post("/", handlers.CreateNewUser(appContainer))
-	user.Put("/:id", handlers.UpdateUser(appContainer))
+	user.Post("/", middlewares.RequireAuth(appContainer, int8(domain.UserRoleAdmin)), handlers.CreateNewUser(appContainer))
+	user.Put("/:id", middlewares.RequireAuth(appContainer, int8(domain.UserRoleUnknown)), handlers.UpdateUser(appContainer))
 	logger.Info("User routes configured.")
 }
 

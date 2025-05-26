@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"tasoryx/app"
+	"tasoryx/internal/user/domain"
 	"tasoryx/pkg/context"
 	"tasoryx/pkg/jwt"
 	"time"
@@ -83,7 +84,39 @@ func GetNewAccessToken(appContainer app.App) fiber.Handler {
 			return HandleError(err, c, fiber.StatusInternalServerError)
 		}
 
+		data := IDRes{
+			ID: claims.ID,
+		}
+
 		c.Set("Authorization", "Bearer "+newAccessToken)
-		return HandleSuccess(c, claims.UserID, "New access token generated")
+		return HandleSuccess(c, data, "New access token generated")
+	}
+}
+
+func RegisterUser(appContainer app.App) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		request := new(RegisterReq)
+		if err := c.Bind().Body(&request); err != nil {
+			return HandleError(err, c, fiber.StatusBadRequest)
+		}
+		ctx := context.NewAppContext(c.Context())
+		service := appContainer.UserService(ctx)
+		newUser := domain.User{
+			Name:      request.Name,
+			Email:     request.Email,
+			Password:  request.Password,
+			Role:      domain.UserRoleUser,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		userID, err := service.CreateUser(ctx, newUser)
+		if err != nil {
+			return HandleError(err, c, fiber.StatusInternalServerError)
+		}
+		data := IDRes{
+			ID: userID,
+		}
+		return HandleSuccess(c, data, "User registered successfully")
+
 	}
 }
